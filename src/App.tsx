@@ -4,7 +4,6 @@ import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useSpr
 import { BlurText } from './components/BlurText'
 import { FlowingMenu } from './components/FlowingMenu'
 import { ImageTrail } from './components/ImageTrail'
-import { LanyardCard } from './components/LanyardCard'
 import { PillNav } from './components/PillNav'
 import { ProfileCard } from './components/ProfileCard'
 import { ScrollReveal } from './components/ScrollReveal'
@@ -19,30 +18,36 @@ const heroTrailImages = [
   './assets/tool-nano-banana.svg',
 ]
 
-const contactBendColors = ['#a1b1bd', '#dce5e9', '#728994']
 const contactTypingSpeed = { min: 85, max: 155 }
-const LazyColorBends = lazy(() => import('./components/ColorBends').then(module => ({ default: module.ColorBends })))
+const LazyLanyardCard = lazy(() => import('./components/LanyardCard').then(module => ({ default: module.LanyardCard })))
 
 function ContactBends() {
+  return (
+    <div className="contact__bends" aria-hidden="true">
+      <span className="contact__bend contact__bend--one" />
+      <span className="contact__bend contact__bend--two" />
+      <span className="contact__bend contact__bend--three" />
+    </div>
+  )
+}
+
+function ContactLanyard() {
   const loadBoundaryRef = useRef<HTMLDivElement | null>(null)
-  const shouldLoad = useInView(loadBoundaryRef, { once: true, margin: '45% 0px' })
+  const shouldLoad = useInView(loadBoundaryRef, { once: true, margin: '50% 0px' })
+  const reduceMotion = useReducedMotion()
 
   return (
-    <div ref={loadBoundaryRef} className="contact__bends" aria-hidden="true">
-      {shouldLoad && (
-        <Suspense fallback={null}>
-          <LazyColorBends
-            colors={contactBendColors}
-            speed={0.28}
-            rotation={112}
-            scale={0.78}
-            frequency={1.12}
-            warpStrength={0.96}
-            mouseInfluence={0.78}
-            intensity={1.08}
-          />
+    <div ref={loadBoundaryRef} className="contact__lanyard-stage">
+      {reduceMotion ? (
+        <div className="contact__lanyard-fallback" aria-label="邱宇的个人身份牌">
+          <img src="./assets/qiu-yu.webp" alt="邱宇" />
+          <img src="./assets/logo.svg" alt="" aria-hidden="true" />
+        </div>
+      ) : shouldLoad ? (
+        <Suspense fallback={<span className="contact__lanyard-loading">正在装配身份牌…</span>}>
+          <LazyLanyardCard portrait="./assets/qiu-yu.webp" logo="./assets/logo.svg" cameraDistance={41} />
         </Suspense>
-      )}
+      ) : null}
     </div>
   )
 }
@@ -487,7 +492,7 @@ function App() {
                   </a>
                 </ScrollReveal>
               </div>
-              <LanyardCard portrait="./assets/qiu-yu.webp" logo="./assets/logo.svg" />
+              <ContactLanyard />
             </div>
             <div className="contact-meta">
               <span>邱宇 · UI / UX 设计师</span>

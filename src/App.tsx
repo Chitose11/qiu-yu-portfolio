@@ -61,17 +61,12 @@ const projects = [
       '把图片与视频的加水印、去水印、画布编辑和批量导出，收束进一套统一的桌面工作流。重点处理多选区、时间范围、批量应用与异常反馈。',
     tags: ['桌面端工具', '图片 / 视频工作流', '批量处理'],
     coverLabel: '水印助手',
-    detail: './assets/watermark-editor.webp',
-    gallery: [
-      { src: './assets/watermark-showcase.png', label: '项目封面', kind: 'showcase' },
-      { src: './assets/watermark-editor.webp', label: '编辑工作台', kind: 'interface' },
-      { src: './assets/watermark-home.webp', label: '功能首页', kind: 'interface' },
-    ],
+    cover: { src: './assets/watermark-showcase.png', label: '项目封面', kind: 'showcase' },
     tone: 'violet',
     facts: [
-      ['四类任务入口', '图片与视频的加水印、去水印共用一致的任务模型'],
-      ['复杂编辑控制', '文字、图片、多选区、时间范围与九宫格定位'],
-      ['批量与异常状态', '文件列表、应用到全部、输出目录和错误分类反馈'],
+      { title: '四类任务入口', body: '图片与视频的加水印、去水印共用一致的任务模型', asset: { src: './assets/watermark-fact-tasks.webp', label: '四类任务入口界面' } },
+      { title: '复杂编辑控制', body: '文字、图片、多选区、时间范围与九宫格定位', asset: { src: './assets/watermark-fact-editor.webp', label: '图片加水印编辑工作台' } },
+      { title: '批量与异常状态', body: '文件列表、应用到全部、输出目录和错误分类反馈', asset: { src: './assets/watermark-fact-feedback.webp', label: '导入异常分类反馈' } },
     ],
   },
   {
@@ -82,17 +77,12 @@ const projects = [
       '围绕人声、伴奏与视频音轨处理，设计从拖拽导入、批量任务、参数设置到结果反馈的端到端体验，让专业操作更容易理解。',
     tags: ['音视频工具', '批量任务', '状态反馈'],
     coverLabel: '人声分离',
-    detail: './assets/voice-batch.webp',
-    gallery: [
-      { src: './assets/voice-showcase.png', label: '项目封面', kind: 'showcase' },
-      { src: './assets/voice-home.webp', label: '功能首页', kind: 'interface' },
-      { src: './assets/voice-batch.webp', label: '批量任务', kind: 'interface' },
-    ],
+    cover: { src: './assets/voice-showcase.png', label: '项目封面', kind: 'showcase' },
     tone: 'blue',
     facts: [
-      ['多工具信息架构', '统一组织人声、伴奏与多种乐器声部处理入口'],
-      ['批处理工作流', '文件状态、进度、参数设置和行级操作保持连续'],
-      ['完整反馈闭环', '覆盖空状态、编辑弹窗、处理中与完成反馈'],
+      { title: '多工具信息架构', body: '统一组织人声、伴奏与多种乐器声部处理入口', asset: { src: './assets/voice-fact-architecture.webp', label: '多工具欢迎页' } },
+      { title: '批处理工作流', body: '文件状态、进度、参数设置和行级操作保持连续', asset: { src: './assets/voice-fact-batch.webp', label: '批量任务工作台' } },
+      { title: '完整反馈闭环', body: '覆盖空状态、编辑弹窗、处理中与完成反馈', asset: { src: './assets/voice-fact-feedback.webp', label: '批处理完成反馈' } },
     ],
   },
   {
@@ -103,17 +93,12 @@ const projects = [
       '把账号定位、选题规划、文案生成、违规检测与封面预览串成可执行流程，同时覆盖历史记录、会员与积分等产品化场景。',
     tags: ['AI 创作工作流', '内容策略', '会员与权限'],
     coverLabel: '小红书 AI',
-    detail: './assets/xhs-home.webp',
-    gallery: [
-      { src: './assets/xhs-showcase.png', label: '项目封面', kind: 'showcase' },
-      { src: './assets/xhs-home.webp', label: '流程首页', kind: 'interface' },
-      { src: './assets/xhs-positioning.webp', label: '账号定位', kind: 'interface' },
-    ],
+    cover: { src: './assets/xhs-showcase.png', label: '项目封面', kind: 'showcase' },
     tone: 'red',
     facts: [
-      ['五步创作流程', '从账号策略到发布前检查，减少工具间的体验断点'],
-      ['多维输入与结果', '承载账号画像、选题列表、文案参数与风险文本'],
-      ['产品化完整度', '历史记录、会员套餐、积分消耗与权限状态形成闭环'],
+      { title: '五步创作流程', body: '从账号策略到发布前检查，减少工具间的体验断点', asset: { src: './assets/xhs-fact-flow.webp', label: '五步创作流程首页' } },
+      { title: '多维输入与结果', body: '承载账号画像、选题列表、文案参数与风险文本', asset: { src: './assets/xhs-fact-input.webp', label: 'IP 账号定位工作台' } },
+      { title: '产品化完整度', body: '历史记录、会员套餐、积分消耗与权限状态形成闭环', asset: { src: './assets/xhs-fact-product.webp', label: '会员与权限页面' } },
     ],
   },
 ]
@@ -180,8 +165,8 @@ function SectionHeading({
 
 function ProjectSection({ project, index }: { project: (typeof projects)[number]; index: number }) {
   const reduceMotion = useReducedMotion()
-  const [activePreview, setActivePreview] = useState(0)
-  const activeAsset = project.gallery[activePreview]
+  const [activeFactIndex, setActiveFactIndex] = useState(0)
+  const activeFact = project.facts[activeFactIndex]
   const stageRef = useRef<HTMLElement | null>(null)
   const { scrollYProgress } = useScroll({
     target: stageRef,
@@ -232,60 +217,20 @@ function ProjectSection({ project, index }: { project: (typeof projects)[number]
         </span>
         <motion.div
           className="project__gallery-frame"
-          id={`${project.id}-preview-panel`}
-          role="tabpanel"
-          aria-label={`${project.title}：${activeAsset.label}`}
+          aria-label={`${project.title}：${project.cover.label}`}
           style={{ y: imageY, rotate: imageRotate }}
           initial={reduceMotion ? false : { scale: 1.11, filter: 'blur(9px)' }}
           whileInView={{ scale: 1, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.16 }}
           transition={{ duration: 1.28, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
         >
-          <AnimatePresence initial={false} mode="popLayout">
-            <motion.img
-              key={activeAsset.src}
-              className={`project__gallery-image project__gallery-image--${activeAsset.kind}`}
-              src={activeAsset.src}
-              alt={`${project.title} · ${activeAsset.label}`}
-              loading={index === 0 || activePreview > 0 ? 'eager' : 'lazy'}
-              initial={reduceMotion ? false : { opacity: 0, scale: 1.035, filter: 'blur(7px)', clipPath: 'inset(0 0 0 10%)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)', clipPath: 'inset(0 0 0 0%)' }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.985, filter: 'blur(5px)', clipPath: 'inset(0 10% 0 0)' }}
-              transition={{ duration: reduceMotion ? 0.01 : 0.48, ease: [0.16, 1, 0.3, 1] }}
-            />
-          </AnimatePresence>
+          <motion.img
+            className={`project__gallery-image project__gallery-image--${project.cover.kind}`}
+            src={project.cover.src}
+            alt={`${project.title} · ${project.cover.label}`}
+            loading={index === 0 ? 'eager' : 'lazy'}
+          />
         </motion.div>
-        <div className="project__preview-nav" role="tablist" aria-label={`${project.title}界面预览`}>
-          {project.gallery.map((asset, assetIndex) => {
-            const active = assetIndex === activePreview
-            return (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={active}
-                aria-controls={`${project.id}-preview-panel`}
-                className={active ? 'is-active' : ''}
-                tabIndex={active ? 0 : -1}
-                onMouseEnter={() => setActivePreview(assetIndex)}
-                onFocus={() => setActivePreview(assetIndex)}
-                onClick={() => setActivePreview(assetIndex)}
-                onKeyDown={event => {
-                  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
-                  event.preventDefault()
-                  const direction = event.key === 'ArrowRight' ? 1 : -1
-                  const nextIndex = (assetIndex + direction + project.gallery.length) % project.gallery.length
-                  setActivePreview(nextIndex)
-                  const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('button')
-                  buttons?.[nextIndex]?.focus()
-                }}
-                key={asset.src}
-              >
-                <span>{String(assetIndex + 1).padStart(2, '0')}</span>
-                {asset.label}
-              </button>
-            )
-          })}
-        </div>
         <motion.span
           aria-hidden="true"
           className="project__curtain"
@@ -298,20 +243,55 @@ function ProjectSection({ project, index }: { project: (typeof projects)[number]
 
       <div className="project__evidence">
         <ScrollReveal variant="detail" amount={0.18}>
-          <figure className={`project__detail ${project.id === 'xhs' ? 'project__detail--portrait' : ''}`}>
-            <img src={project.detail} alt={`${project.title}完整流程界面`} loading="lazy" />
+          <figure
+            className="project__detail"
+            id={`${project.id}-evidence-panel`}
+            role="tabpanel"
+            aria-label={`${project.title}：${activeFact.asset.label}`}
+          >
+            <AnimatePresence initial={false} mode="popLayout">
+              <motion.img
+                key={activeFact.asset.src}
+                src={activeFact.asset.src}
+                alt={`${project.title} · ${activeFact.asset.label}`}
+                loading="lazy"
+                initial={reduceMotion ? false : { opacity: 0, scale: 1.025, filter: 'blur(7px)', clipPath: 'inset(0 0 0 8%)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)', clipPath: 'inset(0 0 0 0%)' }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.99, filter: 'blur(5px)', clipPath: 'inset(0 8% 0 0)' }}
+                transition={{ duration: reduceMotion ? 0.01 : 0.42, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </AnimatePresence>
           </figure>
         </ScrollReveal>
-        <div className="project__facts">
+        <div className="project__facts" role="tablist" aria-label={`${project.title}设计问题与界面证据`}>
           <ScrollReveal variant="copy" amount={0.5}>
             <p className="project__question">我在这个项目里解决了什么？</p>
           </ScrollReveal>
-          {project.facts.map(([title, body], factIndex) => (
-            <ScrollReveal variant="row" delay={factIndex * 0.08} amount={0.45} key={title}>
-              <div className="fact">
-                <h5>{title}</h5>
-                <p>{body}</p>
-              </div>
+          {project.facts.map((fact, factIndex) => (
+            <ScrollReveal variant="row" delay={factIndex * 0.08} amount={0.45} key={fact.title}>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={factIndex === activeFactIndex}
+                aria-controls={`${project.id}-evidence-panel`}
+                className={`fact ${factIndex === activeFactIndex ? 'is-active' : ''}`}
+                tabIndex={factIndex === activeFactIndex ? 0 : -1}
+                onMouseEnter={() => setActiveFactIndex(factIndex)}
+                onFocus={() => setActiveFactIndex(factIndex)}
+                onClick={() => setActiveFactIndex(factIndex)}
+                onKeyDown={event => {
+                  if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
+                  event.preventDefault()
+                  const direction = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? 1 : -1
+                  const nextIndex = (factIndex + direction + project.facts.length) % project.facts.length
+                  setActiveFactIndex(nextIndex)
+                  const buttons = event.currentTarget.closest('[role="tablist"]')?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+                  buttons?.[nextIndex]?.focus()
+                }}
+              >
+                <h5>{fact.title}</h5>
+                <p>{fact.body}</p>
+              </button>
             </ScrollReveal>
           ))}
         </div>

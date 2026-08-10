@@ -583,56 +583,6 @@ img {
   text-shadow: 0 0.35rem 1.4rem rgba(0, 0, 0, 0.32);
 }
 
-.project__preview-nav {
-  position: absolute;
-  z-index: 3;
-  right: clamp(1rem, 2vw, 1.8rem);
-  bottom: clamp(1rem, 2vw, 1.8rem);
-  display: flex;
-  gap: 0.35rem;
-  padding: 0.35rem;
-  border-radius: 999px;
-  background: rgba(16, 16, 15, 0.76);
-  box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(14px);
-}
-
-.project__preview-nav button {
-  min-height: 2.75rem;
-  padding: 0.62rem 0.84rem;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.68);
-  font-family: inherit;
-  font-size: 0.74rem;
-  font-weight: 620;
-  cursor: pointer;
-  transition: color 180ms ease, background 240ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.project__preview-nav button span {
-  margin-right: 0.42rem;
-  color: rgba(255, 255, 255, 0.42);
-  font-family: "Manrope Variable", sans-serif;
-  font-variant-numeric: tabular-nums;
-}
-
-.project__preview-nav button:hover,
-.project__preview-nav button.is-active {
-  background: rgba(255, 255, 255, 0.94);
-  color: #171716;
-}
-
-.project__preview-nav button.is-active span {
-  color: #6a6760;
-}
-
-.project__preview-nav button:focus-visible {
-  outline-color: #fff;
-  outline-offset: 3px;
-}
-
 .project__curtain {
   position: absolute;
   z-index: 4;
@@ -651,24 +601,22 @@ img {
 }
 
 .project__detail {
+  position: relative;
   overflow: hidden;
   margin: 0;
+  aspect-ratio: 8 / 5;
   border-radius: 1.25rem;
   background: #dedbd3;
   box-shadow: 0 1rem 3rem rgba(25, 24, 22, 0.1);
 }
 
 .project__detail img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-}
-
-.project__detail--portrait {
-  max-height: 52rem;
-}
-
-.project__detail--portrait img {
+  height: 100%;
   object-fit: cover;
-  object-position: top;
+  will-change: transform, filter, opacity, clip-path;
 }
 
 .project__question {
@@ -679,12 +627,34 @@ img {
 }
 
 .fact {
-  padding: 1.6rem 0;
+  width: calc(100% + 2rem);
+  margin: 0 -1rem;
+  padding: 1.6rem 1rem;
   border-top: 1px solid var(--line);
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 220ms ease, color 180ms ease;
 }
 
 .fact:last-child {
   border-bottom: 1px solid var(--line);
+}
+
+.project--violet .fact:is(:hover, .is-active) { background: rgba(112, 65, 183, 0.07); }
+.project--blue .fact:is(:hover, .is-active) { background: rgba(23, 104, 183, 0.07); }
+.project--red .fact:is(:hover, .is-active) { background: rgba(183, 37, 58, 0.065); }
+
+.fact:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
 }
 
 .fact h5 {
@@ -696,6 +666,10 @@ img {
   margin: 0;
   color: #5e5b56;
   line-height: 1.72;
+}
+
+.fact.is-active p {
+  color: #34322f;
 }
 
 .capabilities,
@@ -1676,31 +1650,6 @@ img {
     top: 1.2rem;
     left: 1.2rem;
     font-size: 1rem;
-  }
-
-  .project__preview-nav {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    left: auto;
-    justify-content: stretch;
-    padding: 0.45rem var(--pad);
-    border-radius: 0;
-    box-shadow: none;
-    backdrop-filter: none;
-  }
-
-  .project__preview-nav button {
-    flex: 1;
-    min-width: 0;
-    min-height: 2.5rem;
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
-    font-size: 0.68rem;
-  }
-
-  .project__preview-nav button span {
-    display: none;
   }
 
   .experience-row {

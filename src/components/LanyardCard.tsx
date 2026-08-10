@@ -159,9 +159,27 @@ function LanyardScene({ portrait, logo, isMobile }: LanyardCardProps & { isMobil
     return composite
   }, [cardImages, materials.base.map])
 
-  const ropePoints = useMemo(() => [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()], [])
+  const ropeNodeCount = 16
+  const cardScale = isMobile ? 5.45 : 6.2
+  // The GLB clip ring tops out at local y 1.229. Connecting here prevents
+  // the cord from appearing to pierce the card body during a drag.
+  const attachOffset = cardScale * 1.225
+  const ropeLength = isMobile ? 3.3 : 3.25
+  const ropeSegmentLength = ropeLength / (ropeNodeCount - 1)
+  const ropeAnchor = useMemo(() => new THREE.Vector3(0, isMobile ? 8.6 : 9, -0.32), [isMobile])
+  const ropePoints = useMemo(() => {
+    const restPosition = new THREE.Vector3(isMobile ? 0 : 1.1, -0.9 + attachOffset, -0.32)
+    return Array.from({ length: ropeNodeCount }, (_, index) =>
+      ropeAnchor.clone().lerp(restPosition, index / (ropeNodeCount - 1)),
+    )
+  }, [attachOffset, isMobile, ropeAnchor])
+  const ropePrevious = useMemo(() => ropePoints.map(point => point.clone()), [ropePoints])
   const ropeDirection = useMemo(() => new THREE.Vector3(), [])
   const ropeMidpoint = useMemo(() => new THREE.Vector3(), [])
+  const ropeCorrection = useMemo(() => new THREE.Vector3(), [])
+  const ropeVelocity = useMemo(() => new THREE.Vector3(), [])
+  const cardAttachment = useMemo(() => new THREE.Vector3(), [])
+  const attachmentOffsetVector = useMemo(() => new THREE.Vector3(), [])
   const verticalAxis = useMemo(() => new THREE.Vector3(0, 1, 0), [])
 
   useEffect(() => {
@@ -177,6 +195,13 @@ function LanyardScene({ portrait, logo, isMobile }: LanyardCardProps & { isMobil
       rayDirection.current.copy(pointerWorld.current).sub(state.camera.position).normalize()
       pointerWorld.current.add(rayDirection.current.multiplyScalar(-pointerWorld.current.z / rayDirection.current.z))
       dragTarget.current.copy(pointerWorld.current).sub(dragOffset.current)
+      attachmentOffsetVector.set(0, attachOffset, -0.32)
+      cardAttachment.copy(dragTarget.current).add(attachmentOffsetVector)
+      ropeDirection.copy(cardAttachment).sub(ropeAnchor)
+      if (ropeDirection.length() > ropeLength) {
+        cardAttachment.copy(ropeAnchor).add(ropeDirection.setLength(ropeLength))
+        dragTarget.current.copy(cardAttachment).sub(attachmentOffsetVector)
+      }
       position.current.lerp(dragTarget.current, 1 - Math.exp(-18 * frameDelta))
       velocity.current.multiplyScalar(0.72)
     } else {
@@ -192,10 +217,43 @@ function LanyardScene({ portrait, logo, isMobile }: LanyardCardProps & { isMobil
     group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, velocity.current.y * 0.025, 0.08)
     group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, velocity.current.x * 0.018, 0.08)
 
-    const cardTop = ropePoints[0].set(position.current.x, position.current.y + 5.05, 0)
-    ropePoints[1].set(cardTop.x * 0.9, cardTop.y + 1.9, 0.08)
-    ropePoints[2].set(cardTop.x * 0.45, 6.6, -0.05)
-    ropePoints[3].set(0, 9, 0)
+    attachmentOffsetVector.set(0, attachOffset, 0).applyQuaternion(group.current.quaternion)
+    cardAttachment.copy(position.current).add(attachmentOffsetVector)
+    cardAttachment.z = -0.32
+
+    for (let index = 1; index < ropeNodeCount - 1; index += 1) {
+      const point = ropePoints[index]
+      const previous = ropePrevious[index]
+      ropeVelocity.copy(point).sub(previous).multiplyScalar(0.94)
+      previous.copy(point)
+      point.add(ropeVelocity)
+      point.y -= 1.25 * frameDelta * frameDelta
+    }
+
+    ropePoints[0].copy(ropeAnchor)
+    ropePoints[ropeNodeCount - 1].copy(cardAttachment)
+    for (let iteration = 0; iteration < 8; iteration += 1) {
+      ropePoints[0].copy(ropeAnchor)
+      ropePoints[ropeNodeCount - 1].copy(cardAttachment)
+      for (let index = 0; index < ropeNodeCount - 1; index += 1) {
+        const start = ropePoints[index]
+        const end = ropePoints[index + 1]
+        ropeCorrection.copy(end).sub(start)
+        const distance = Math.max(ropeCorrection.length(), 0.0001)
+        ropeCorrection.multiplyScalar((distance - ropeSegmentLength) / distance)
+        if (index === 0) {
+          end.sub(ropeCorrection)
+        } else if (index === ropeNodeCount - 2) {
+          start.add(ropeCorrection)
+        } else {
+          start.addScaledVector(ropeCorrection, 0.5)
+          end.addScaledVector(ropeCorrection, -0.5)
+        }
+      }
+    }
+    ropePoints[0].copy(ropeAnchor)
+    ropePoints[ropeNodeCount - 1].copy(cardAttachment)
+
     ropeSegments.current.forEach((segment, index) => {
       if (!segment) return
       const start = ropePoints[index]
@@ -219,7 +277,7 @@ function LanyardScene({ portrait, logo, isMobile }: LanyardCardProps & { isMobil
     <>
       <group
         ref={group}
-        scale={isMobile ? 5.45 : 6.2}
+        scale={cardScale}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
         onPointerUp={releasePointer}
@@ -236,9 +294,9 @@ function LanyardScene({ portrait, logo, isMobile }: LanyardCardProps & { isMobil
         <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.28} />
         <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
       </group>
-      {[0, 1, 2].map(index => (
+      {Array.from({ length: ropeNodeCount - 1 }, (_, index) => (
         <mesh key={index} ref={node => { ropeSegments.current[index] = node }}>
-          <cylinderGeometry args={[0.075, 0.075, 1, 10]} />
+          <cylinderGeometry args={[0.055, 0.055, 1, 10]} />
           <meshStandardMaterial color="#171c1f" roughness={0.82} />
         </mesh>
       ))}

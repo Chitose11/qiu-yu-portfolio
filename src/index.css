@@ -605,7 +605,7 @@ img {
   position: relative;
   overflow: hidden;
   margin: 0;
-  aspect-ratio: 8 / 5;
+  padding: var(--evidence-inset);
   border-radius: 1rem;
   background: #dedbd3;
 }
@@ -615,12 +615,12 @@ img {
 .project--red .project__detail { background: #f2cfd4; }
 
 .project__detail img {
-  position: absolute;
-  inset: var(--evidence-inset);
-  width: calc(100% - var(--evidence-inset) - var(--evidence-inset));
-  height: calc(100% - var(--evidence-inset) - var(--evidence-inset));
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
   border-radius: 0.75rem;
-  object-fit: cover;
+  object-fit: contain;
   box-shadow: 0 0.8rem 2.2rem rgba(25, 24, 22, 0.14);
   will-change: transform, filter, opacity, clip-path;
 }

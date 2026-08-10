@@ -1,10 +1,11 @@
-import { ArrowDownRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 
 export type FlowingMenuItem = {
   title: string
   description: string
   image: string
+  href?: string
 }
 
 type FlowingMenuProps = {
@@ -16,22 +17,15 @@ export function FlowingMenu({ items }: FlowingMenuProps) {
 
   return (
     <div className="flowing-menu">
-      {items.map((item, index) => (
-        <motion.div
-          className={`flowing-menu__item ${index % 2 ? 'flowing-menu__item--reverse' : ''}`}
-          initial={reduceMotion ? false : { opacity: 0, y: 42, filter: 'blur(8px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: true, amount: 0.55 }}
-          transition={{ duration: 0.72, delay: index * 0.045, ease: [0.16, 1, 0.3, 1] }}
-          tabIndex={0}
-          aria-label={`${item.title}：${item.description}`}
-          key={item.title}
-        >
+      {items.map((item, index) => {
+        const className = `flowing-menu__item ${item.href ? 'flowing-menu__item--linked' : ''} ${index % 2 ? 'flowing-menu__item--reverse' : ''}`
+        const visual = (
+          <>
           <div className="flowing-menu__content">
             <h3>{item.title}</h3>
             <p>{item.description}</p>
             <img className="flowing-menu__thumb" src={item.image} alt="" loading="lazy" />
-            <ArrowDownRight aria-hidden="true" />
+            {item.href && <ArrowUpRight aria-hidden="true" />}
           </div>
 
           <div className="flowing-menu__marquee" aria-hidden="true">
@@ -44,8 +38,33 @@ export function FlowingMenu({ items }: FlowingMenuProps) {
               ))}
             </div>
           </div>
-        </motion.div>
-      ))}
+          </>
+        )
+        const motionProps = {
+          className,
+          initial: reduceMotion ? false : { opacity: 0, y: 42, filter: 'blur(8px)' },
+          whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+          viewport: { once: true, amount: 0.55 },
+          transition: { duration: 0.72, delay: index * 0.045, ease: [0.16, 1, 0.3, 1] as const },
+        }
+
+        return item.href ? (
+          <motion.a
+            {...motionProps}
+            href={item.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`${item.title}：${item.description}，打开产品官网（新标签页）`}
+            key={item.title}
+          >
+            {visual}
+          </motion.a>
+        ) : (
+          <motion.div {...motionProps} key={item.title}>
+            {visual}
+          </motion.div>
+        )
+      })}
     </div>
   )
 }

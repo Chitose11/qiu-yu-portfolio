@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Cinema 4D">
+  <defs><linearGradient id="c4d" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#27a9ff"/><stop offset="1" stop-color="#073a9c"/></linearGradient></defs>
+  <rect width="128" height="128" rx="28" fill="#061b46"/>
+  <circle cx="64" cy="58" r="35" fill="none" stroke="url(#c4d)" stroke-width="12"/>
+  <path d="M39 80c12-8 29-10 48-5" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+  <text x="64" y="112" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#fff">C4D</text>
+</svg>

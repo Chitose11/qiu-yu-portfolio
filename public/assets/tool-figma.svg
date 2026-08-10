@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Figma">
+  <rect width="128" height="128" rx="28" fill="#171716"/>
+  <g transform="translate(41 22)">
+    <path d="M0 0h23a12 12 0 0 1 0 24H0z" fill="#f24e1e"/>
+    <path d="M0 24h23a12 12 0 0 1 0 24H0z" fill="#a259ff"/>
+    <path d="M0 48h23v12a12 12 0 1 1-23 0z" fill="#0acf83"/>
+    <circle cx="35" cy="36" r="12" fill="#1abcfe"/>
+    <path d="M23 0h12a12 12 0 1 1 0 24H23z" fill="#ff7262"/>
+  </g>
+</svg>

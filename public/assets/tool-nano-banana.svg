@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Nano Banana">
+  <defs><linearGradient id="nb" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4285f4"/><stop offset=".5" stop-color="#9b72cb"/><stop offset="1" stop-color="#d96570"/></linearGradient></defs>
+  <rect width="128" height="128" rx="28" fill="#fff4a8"/>
+  <path d="M44 36c9 4 17 3 25-4-1 12 5 20 17 24-12 1-20 8-24 20-2-12-9-20-21-22 8-4 10-10 3-18z" fill="url(#nb)"/>
+  <path d="M39 84c14 12 33 11 48-3-4 19-27 31-46 19-6-4-7-11-2-16z" fill="#f7c928" stroke="#8a6812" stroke-width="3"/>
+</svg>

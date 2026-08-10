@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Lovart">
+  <rect width="128" height="128" rx="28" fill="#fff9f4"/>
+  <path d="M93 25l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#ff5f72"/>
+  <text x="64" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="-1.5" fill="#171716">LOVART</text>
+  <path d="M34 90h60" stroke="#171716" stroke-width="4" stroke-linecap="round"/>
+</svg>

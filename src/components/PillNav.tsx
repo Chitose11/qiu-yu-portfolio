@@ -84,7 +84,7 @@ export function PillNav() {
       transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
     >
       <a className="pill-nav__brand" href="#top" aria-label="返回顶部" onClick={closeMenu}>
-        QY
+        <img src="./assets/logo.svg" alt="" aria-hidden="true" />
       </a>
 
       <LayoutGroup id="primary-navigation">

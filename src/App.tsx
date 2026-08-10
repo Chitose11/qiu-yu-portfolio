@@ -1,12 +1,14 @@
-import { useRef } from 'react'
+import { lazy, Suspense, useRef, useState } from 'react'
 import { ArrowDownRight, ArrowUpRight, Github, Mail } from 'lucide-react'
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
+import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 import { BlurText } from './components/BlurText'
 import { FlowingMenu } from './components/FlowingMenu'
 import { ImageTrail } from './components/ImageTrail'
+import { LanyardCard } from './components/LanyardCard'
 import { PillNav } from './components/PillNav'
 import { ProfileCard } from './components/ProfileCard'
 import { ScrollReveal } from './components/ScrollReveal'
+import { TextType } from './components/TextType'
 
 const heroTrailImages = [
   './assets/tool-figma.svg',
@@ -17,6 +19,34 @@ const heroTrailImages = [
   './assets/tool-nano-banana.svg',
 ]
 
+const contactBendColors = ['#a1b1bd', '#dce5e9', '#728994']
+const contactTypingSpeed = { min: 85, max: 155 }
+const LazyColorBends = lazy(() => import('./components/ColorBends').then(module => ({ default: module.ColorBends })))
+
+function ContactBends() {
+  const loadBoundaryRef = useRef<HTMLDivElement | null>(null)
+  const shouldLoad = useInView(loadBoundaryRef, { once: true, margin: '45% 0px' })
+
+  return (
+    <div ref={loadBoundaryRef} className="contact__bends" aria-hidden="true">
+      {shouldLoad && (
+        <Suspense fallback={null}>
+          <LazyColorBends
+            colors={contactBendColors}
+            speed={0.28}
+            rotation={112}
+            scale={0.78}
+            frequency={1.12}
+            warpStrength={0.96}
+            mouseInfluence={0.78}
+            intensity={1.08}
+          />
+        </Suspense>
+      )}
+    </div>
+  )
+}
+
 const projects = [
   {
     id: 'watermark',
@@ -25,9 +55,13 @@ const projects = [
     summary:
       '把图片与视频的加水印、去水印、画布编辑和批量导出，收束进一套统一的桌面工作流。重点处理多选区、时间范围、批量应用与异常反馈。',
     tags: ['桌面端工具', '图片 / 视频工作流', '批量处理'],
-    cover: './assets/watermark-showcase.png',
     coverLabel: '水印助手',
     detail: './assets/watermark-editor.webp',
+    gallery: [
+      { src: './assets/watermark-showcase.png', label: '项目封面', kind: 'showcase' },
+      { src: './assets/watermark-editor.webp', label: '编辑工作台', kind: 'interface' },
+      { src: './assets/watermark-home.webp', label: '功能首页', kind: 'interface' },
+    ],
     tone: 'violet',
     facts: [
       ['四类任务入口', '图片与视频的加水印、去水印共用一致的任务模型'],
@@ -42,9 +76,13 @@ const projects = [
     summary:
       '围绕人声、伴奏与视频音轨处理，设计从拖拽导入、批量任务、参数设置到结果反馈的端到端体验，让专业操作更容易理解。',
     tags: ['音视频工具', '批量任务', '状态反馈'],
-    cover: './assets/voice-batch.webp',
     coverLabel: '人声分离',
     detail: './assets/voice-batch.webp',
+    gallery: [
+      { src: './assets/voice-showcase.png', label: '项目封面', kind: 'showcase' },
+      { src: './assets/voice-home.webp', label: '功能首页', kind: 'interface' },
+      { src: './assets/voice-batch.webp', label: '批量任务', kind: 'interface' },
+    ],
     tone: 'blue',
     facts: [
       ['多工具信息架构', '统一组织人声、伴奏与多种乐器声部处理入口'],
@@ -59,9 +97,13 @@ const projects = [
     summary:
       '把账号定位、选题规划、文案生成、违规检测与封面预览串成可执行流程，同时覆盖历史记录、会员与积分等产品化场景。',
     tags: ['AI 创作工作流', '内容策略', '会员与权限'],
-    cover: './assets/xhs-showcase.png',
     coverLabel: '小红书 AI',
     detail: './assets/xhs-home.webp',
+    gallery: [
+      { src: './assets/xhs-showcase.png', label: '项目封面', kind: 'showcase' },
+      { src: './assets/xhs-home.webp', label: '流程首页', kind: 'interface' },
+      { src: './assets/xhs-positioning.webp', label: '账号定位', kind: 'interface' },
+    ],
     tone: 'red',
     facts: [
       ['五步创作流程', '从账号策略到发布前检查，减少工具间的体验断点'],
@@ -93,11 +135,11 @@ const experience = [
 ]
 
 const moreProjects = [
-  { title: '电脑录屏', description: '录制、录音、定时任务与设备设置', image: './assets/more-recorder.webp' },
-  { title: '视频大师', description: '剪切、合并、配乐与画面调节', image: './assets/more-video.webp' },
-  { title: '吾记', description: '日记、日历、模板与时光记录', image: './assets/more-journal.webp' },
+  { title: '电脑录屏', description: '录制、录音、定时任务与设备设置', image: './assets/more-recorder.webp', href: 'https://www.jianlu365.com/screenrecording.html' },
+  { title: '视频大师', description: '剪切、合并、配乐与画面调节', image: './assets/more-video.webp', href: 'https://www.jianlu365.com/videoconverter.html' },
+  { title: '吾记', description: '日记、日历、模板与时光记录', image: './assets/more-journal.webp', href: 'https://www.wujiapp.cn/#/' },
   { title: '豌豆便签', description: '多列便签、桌面组件与信息整理', image: './assets/more-notes.webp' },
-  { title: '多开', description: '多账号服务人员的效率工具', image: './assets/more-multi.webp' },
+  { title: '多开', description: '多账号服务人员的效率工具', image: './assets/more-multi.webp', href: 'https://www.jianlu365.com/multiboxing.html' },
   { title: '音频剪辑', description: '面向大众的音频处理体验', image: './assets/more-audio.webp' },
 ]
 
@@ -133,7 +175,8 @@ function SectionHeading({
 
 function ProjectSection({ project, index }: { project: (typeof projects)[number]; index: number }) {
   const reduceMotion = useReducedMotion()
-  const preserveUi = project.id === 'voice'
+  const [activePreview, setActivePreview] = useState(0)
+  const activeAsset = project.gallery[activePreview]
   const stageRef = useRef<HTMLElement | null>(null)
   const { scrollYProgress } = useScroll({
     target: stageRef,
@@ -143,7 +186,7 @@ function ProjectSection({ project, index }: { project: (typeof projects)[number]
   const imageRotate = useTransform(
     scrollYProgress,
     [0, 0.5, 1],
-    reduceMotion || preserveUi ? [0, 0, 0] : [0.45, 0, -0.45],
+    reduceMotion ? [0, 0, 0] : [0.45, 0, -0.45],
   )
   return (
     <article className={`project project--${project.tone}`} id={project.id}>
@@ -173,7 +216,7 @@ function ProjectSection({ project, index }: { project: (typeof projects)[number]
 
       <motion.figure
         ref={stageRef}
-        className={`project__stage ${preserveUi ? 'project__stage--preserve-ui' : ''}`}
+        className="project__stage"
         initial={reduceMotion ? false : { clipPath: 'inset(16% 0 16% 0 round 24px)', y: 94, scale: 0.96 }}
         whileInView={{ clipPath: 'inset(0% 0 0% 0 round 24px)', y: 0, scale: 1 }}
         viewport={{ once: true, amount: 0.14 }}
@@ -182,16 +225,62 @@ function ProjectSection({ project, index }: { project: (typeof projects)[number]
         <span className="project__cover-label" aria-hidden="true">
           {project.coverLabel}
         </span>
-        <motion.img
-          src={project.cover}
-          alt={`${project.title}核心界面`}
-          loading={index === 0 ? 'eager' : 'lazy'}
+        <motion.div
+          className="project__gallery-frame"
+          id={`${project.id}-preview-panel`}
+          role="tabpanel"
+          aria-label={`${project.title}：${activeAsset.label}`}
           style={{ y: imageY, rotate: imageRotate }}
           initial={reduceMotion ? false : { scale: 1.11, filter: 'blur(9px)' }}
           whileInView={{ scale: 1, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.16 }}
           transition={{ duration: 1.28, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
-        />
+        >
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.img
+              key={activeAsset.src}
+              className={`project__gallery-image project__gallery-image--${activeAsset.kind}`}
+              src={activeAsset.src}
+              alt={`${project.title} · ${activeAsset.label}`}
+              loading={index === 0 || activePreview > 0 ? 'eager' : 'lazy'}
+              initial={reduceMotion ? false : { opacity: 0, scale: 1.035, filter: 'blur(7px)', clipPath: 'inset(0 0 0 10%)' }}
+              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)', clipPath: 'inset(0 0 0 0%)' }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.985, filter: 'blur(5px)', clipPath: 'inset(0 10% 0 0)' }}
+              transition={{ duration: reduceMotion ? 0.01 : 0.48, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </AnimatePresence>
+        </motion.div>
+        <div className="project__preview-nav" role="tablist" aria-label={`${project.title}界面预览`}>
+          {project.gallery.map((asset, assetIndex) => {
+            const active = assetIndex === activePreview
+            return (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-controls={`${project.id}-preview-panel`}
+                className={active ? 'is-active' : ''}
+                tabIndex={active ? 0 : -1}
+                onMouseEnter={() => setActivePreview(assetIndex)}
+                onFocus={() => setActivePreview(assetIndex)}
+                onClick={() => setActivePreview(assetIndex)}
+                onKeyDown={event => {
+                  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+                  event.preventDefault()
+                  const direction = event.key === 'ArrowRight' ? 1 : -1
+                  const nextIndex = (assetIndex + direction + project.gallery.length) % project.gallery.length
+                  setActivePreview(nextIndex)
+                  const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('button')
+                  buttons?.[nextIndex]?.focus()
+                }}
+                key={asset.src}
+              >
+                <span>{String(assetIndex + 1).padStart(2, '0')}</span>
+                {asset.label}
+              </button>
+            )
+          })}
+        </div>
         <motion.span
           aria-hidden="true"
           className="project__curtain"
@@ -247,7 +336,8 @@ function App() {
             </motion.p>
             <h1>
               <BlurText text="把产品想法，" />
-              <BlurText text="设计成真正运行的软件。" delay={0.018} />
+                <BlurText text="设计成美观" delay={0.018} />
+                <BlurText text="可运行的软件。" delay={0.036} />
             </h1>
             <motion.div
               className="hero__footer"
@@ -276,7 +366,7 @@ function App() {
         <section className="work" id="work" aria-labelledby="work-title">
           <SectionHeading
             id="work-title"
-            title="三个项目，三种复杂度。"
+            title={'三个项目，\n三种复杂度。'}
             body="从跨媒体编辑、批量处理到 AI 内容工作流，作品首先回答“为什么这样设计”。"
           />
           {projects.map((project, index) => (
@@ -372,25 +462,40 @@ function App() {
         </section>
 
         <section className="contact" id="contact" aria-labelledby="contact-title">
-          <ScrollReveal variant="copy" amount={0.7}>
-            <p>如果你正在寻找一位能理解产品、建立系统，也愿意把想法做出来的设计师——</p>
-          </ScrollReveal>
-          <ScrollReveal variant="title" amount={0.55}>
-            <h2 id="contact-title">我们聊聊。</h2>
-          </ScrollReveal>
-          <ScrollReveal variant="row" delay={0.1} amount={0.7}>
-            <a className="contact-mail" href="mailto:953092385@qq.com">
-              <Mail aria-hidden="true" />
-              953092385@qq.com
-              <ArrowUpRight aria-hidden="true" />
-            </a>
-          </ScrollReveal>
-          <div className="contact-meta">
-            <span>邱宇 · UI / UX 设计师</span>
-            <a href="https://github.com/Chitose11" target="_blank" rel="noreferrer">
-              <Github aria-hidden="true" /> GitHub
-            </a>
-            <span>© {new Date().getFullYear()}</span>
+          <ContactBends />
+          <div className="contact__content">
+            <div className="contact__body">
+              <div className="contact__message">
+                <ScrollReveal variant="copy" amount={0.7}>
+                  <p>如果你正在寻找一位能理解产品、建立系统，也愿意把想法做出来的设计师——</p>
+                </ScrollReveal>
+                <TextType
+                  as="h2"
+                  id="contact-title"
+                  text="我们聊聊。"
+                  aria-label="我们聊聊。"
+                  startOnVisible
+                  initialDelay={180}
+                  variableSpeed={contactTypingSpeed}
+                  cursorCharacter="|"
+                />
+                <ScrollReveal variant="row" delay={0.1} amount={0.7}>
+                  <a className="contact-mail" href="mailto:953092385@qq.com">
+                    <Mail aria-hidden="true" />
+                    953092385@qq.com
+                    <ArrowUpRight aria-hidden="true" />
+                  </a>
+                </ScrollReveal>
+              </div>
+              <LanyardCard portrait="./assets/qiu-yu.webp" logo="./assets/logo.svg" />
+            </div>
+            <div className="contact-meta">
+              <span>邱宇 · UI / UX 设计师</span>
+              <a href="https://github.com/Chitose11" target="_blank" rel="noreferrer">
+                <Github aria-hidden="true" /> GitHub
+              </a>
+              <span>© {new Date().getFullYear()}</span>
+            </div>
           </div>
         </section>
       </main>

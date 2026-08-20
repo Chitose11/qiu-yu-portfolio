@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from 'react'
+import { lazy, Suspense, useRef, useState, useSyncExternalStore } from 'react'
 import { ArrowDownRight, ArrowUpRight, Github, Mail } from 'lucide-react'
 import { AnimatePresence, motion, useInView, useReducedMotion, useScroll, useSpring, useTransform } from 'motion/react'
 import { BlurText } from './components/BlurText'
@@ -8,6 +8,7 @@ import { PillNav } from './components/PillNav'
 import { ProfileCard } from './components/ProfileCard'
 import { ScrollReveal } from './components/ScrollReveal'
 import { TextType } from './components/TextType'
+import { ProjectDetailPage } from './ProjectDetailPage'
 
 const heroTrailImages = [
   './assets/tool-figma.svg',
@@ -55,6 +56,7 @@ function ContactLanyard() {
 const projects = [
   {
     id: 'watermark',
+    detailSlug: 'watermark',
     title: '简鹿水印助手',
     subtitle: '让批量水印处理更清晰可控',
     summary:
@@ -71,6 +73,7 @@ const projects = [
   },
   {
     id: 'voice',
+    detailSlug: 'voice-separation',
     title: '简鹿人声分离',
     subtitle: '把复杂音频处理做成清晰的桌面工作流',
     summary:
@@ -87,6 +90,7 @@ const projects = [
   },
   {
     id: 'xhs',
+    detailSlug: 'xhs-ai',
     title: '小红书 AI 创作助手',
     subtitle: '从账号定位到发布预览的一条完整创作链路',
     summary:
@@ -125,12 +129,12 @@ const experience = [
 ]
 
 const moreProjects = [
-  { title: '电脑录屏', description: '录制、录音、定时任务与设备设置', image: './assets/more-recorder.webp', href: 'https://www.jianlu365.com/screenrecording.html' },
-  { title: '视频大师', description: '剪切、合并、配乐与画面调节', image: './assets/more-video.webp', href: 'https://www.jianlu365.com/videoconverter.html' },
-  { title: '吾记', description: '日记、日历、模板与时光记录', image: './assets/more-journal.webp', href: 'https://www.wujiapp.cn/#/' },
-  { title: '豌豆便签', description: '多列便签、桌面组件与信息整理', image: './assets/more-notes.webp' },
-  { title: '多开', description: '多账号服务人员的效率工具', image: './assets/more-multi.webp', href: 'https://www.jianlu365.com/multiboxing.html' },
-  { title: '音频剪辑', description: '面向大众的音频处理体验', image: './assets/more-audio.webp' },
+  { title: '电脑录屏', description: '录制、录音、定时任务与设备设置', image: './assets/more-recorder.webp', href: '#/project/screen-recorder' },
+  { title: '视频大师', description: '剪切、合并、配乐与画面调节', image: './assets/more-video.webp', href: '#/project/video-master' },
+  { title: '吾记', description: '日记、日历、模板与时光记录', image: './assets/more-journal.webp', href: '#/project/wuji' },
+  { title: '豌豆便签', description: '多列便签、桌面组件与信息整理', image: './assets/more-notes.webp', href: '#/project/pea-notes' },
+  { title: '多开', description: '多账号服务人员的效率工具', image: './assets/more-multi.webp', href: '#/project/multiboxing' },
+  { title: '音频剪辑', description: '面向大众的音频处理体验', image: './assets/more-audio.webp', href: '#/project/audio-editor' },
 ]
 
 function ScrollProgress() {
@@ -201,6 +205,9 @@ function ProjectSection({ project, index }: { project: (typeof projects)[number]
               </motion.li>
             ))}
           </ul>
+          <a className="project__detail-link" href={`#/project/${project.detailSlug}`}>
+            查看完整项目档案 <ArrowUpRight aria-hidden="true" />
+          </a>
         </ScrollReveal>
       </div>
 
@@ -300,7 +307,7 @@ function ProjectSection({ project, index }: { project: (typeof projects)[number]
   )
 }
 
-function App() {
+function HomePage() {
   const reduceMotion = useReducedMotion()
   return (
     <>
@@ -416,7 +423,7 @@ function App() {
           <SectionHeading
             id="more-title"
             title="更多产品，也在同一套方法里。"
-            body="这些项目覆盖效率工具、内容记录与音视频创作，后续会逐步补充为完整案例。"
+            body="这些项目覆盖效率工具、内容记录与音视频创作；每个项目都可以继续进入独立介绍页查看真实界面与设计状态。"
           />
           <FlowingMenu items={moreProjects} />
         </section>
@@ -486,6 +493,23 @@ function App() {
       </main>
     </>
   )
+}
+
+function subscribeToHash(callback: () => void) {
+  window.addEventListener('hashchange', callback)
+  return () => window.removeEventListener('hashchange', callback)
+}
+
+function getHashSnapshot() {
+  return window.location.hash
+}
+
+function App() {
+  const hash = useSyncExternalStore(subscribeToHash, getHashSnapshot, () => '')
+  const projectMatch = hash.match(/^#\/project\/([^/?#]+)/)
+
+  if (projectMatch) return <ProjectDetailPage slug={decodeURIComponent(projectMatch[1])} />
+  return <HomePage />
 }
 
 export default App

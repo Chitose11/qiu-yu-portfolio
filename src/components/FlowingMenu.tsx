@@ -18,6 +18,7 @@ export function FlowingMenu({ items }: FlowingMenuProps) {
   return (
     <div className="flowing-menu">
       {items.map((item, index) => {
+        const external = item.href?.startsWith('http')
         const className = `flowing-menu__item ${item.href ? 'flowing-menu__item--linked' : ''} ${index % 2 ? 'flowing-menu__item--reverse' : ''}`
         const visual = (
           <>
@@ -52,9 +53,9 @@ export function FlowingMenu({ items }: FlowingMenuProps) {
           <motion.a
             {...motionProps}
             href={item.href}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`${item.title}：${item.description}，打开产品官网（新标签页）`}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noreferrer' : undefined}
+            aria-label={`${item.title}：${item.description}${external ? '，打开产品官网（新标签页）' : '，查看项目介绍'}`}
             key={item.title}
           >
             {visual}

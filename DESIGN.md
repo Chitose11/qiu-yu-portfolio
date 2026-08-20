@@ -36,7 +36,7 @@ rounded:
   detail: "20px"
   chip: "999px"
 spacing:
-  page-gutter: "clamp(1.25rem, 4vw, 4.5rem)"
+  page-gutter: "max(clamp(1.5rem, 5vw, 6rem), calc((100vw - 100rem) / 2))"
   section-y: "clamp(7rem, 13vw, 13rem)"
   content-gap: "clamp(2rem, 8vw, 9rem)"
 components:
@@ -166,6 +166,13 @@ components:
 - 项目不是同规格卡片网格，而是完整宽度的叙事章节。
 - 主界面置于项目色舞台内；细节图单独浮起，旁边使用线性事实列表解释设计判断。
 - 可切换的界面证据保持原始宽高比并完整显示，由图片自然撑开对应项目色的窄边画框；四向边距保持一致，内层软件窗口承担柔和阴影，外层舞台保持平面。
+
+### Project Detail Pages
+
+- 9 个项目均使用 `#/project/{slug}` 的 GitHub Pages 兼容路由，首页项目名、精选案例链接与 Flowing Menu 都进入对应详情。
+- 详情页沿用暖灰纸张、最大 1600px 内容宽度与项目单色；首屏只把真实界面作为封面裁切，正文画廊始终保留截图原始比例。
+- 每页依次说明项目定位、设计挑战、组织方式、素材覆盖与真实界面；只有官网长图的项目明确作为官网设计案例，不推断软件内部流程。
+- 项目截图使用 WebP、首图优先加载、其余懒加载；点击界面图可在新标签打开大图。
 
 ### Contact Link
 
